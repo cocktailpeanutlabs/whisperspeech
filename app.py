@@ -16,6 +16,12 @@ text_examples = [
     ["<pl>To jest pierwszy test naszego modelu. Pozdrawiamy serdecznie.", None],
     # ["<en> The big difference between Europe <fr> et les Etats Unis <pl> jest to, że mamy tak wiele języków <uk> тут, в Європі"]
 ]
+if torch.cuda.is_available():
+  device = "cuda"
+elif torch.backends.mps.is_available():
+  device = "mps"
+else:
+  device = "cpu"
 
 def parse_multilingual_text(input_text):
     pattern = r"(?:<(\w+)>)|([^<]+)"
@@ -35,8 +41,12 @@ def generate_audio(pipe, segments, speaker, speaker_url, cps=14):
     print(texts, langs)
     stoks = pipe.t2s.generate(texts, cps=cps, lang=langs)[0]
     atoks = pipe.s2a.generate(stoks, speaker.unsqueeze(0))
-    audio = pipe.vocoder.decode(atoks.to("cpu")) # <-- `atoks` needs to be on the CPU because the torch ops within vocoder aren't yet MPS compatible
-    return audio
+    if device == "cuda":
+      audio = pipe.vocoder.decode(atoks)
+      return audio.cpu()
+    else:
+      audio = pipe.vocoder.decode(atoks.to("cpu")) # <-- `atoks` needs to be on the CPU because the torch ops within vocoder aren't yet MPS compatible
+      return audio.cpu()
 
 
 def whisper_speech_demo(multilingual_text, speaker_audio=None, speaker_url="", cps=14):
