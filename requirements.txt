@@ -1,0 +1,3 @@
+git+https://github.com/collabora/WhisperSpeech@refs/pull/93/head
+gradio==4.15.0
+webdataset
