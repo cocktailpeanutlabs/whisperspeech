@@ -48,8 +48,8 @@ module.exports = {
           text: "Install",
           href: "install.js",
         }, {
-          icon: "fa-solid fa-broom",
-          text: "Factory Reset",
+          icon: "fa-solid fa-x",
+          text: "Reset",
           href: "reset.js",
         }]
       }
