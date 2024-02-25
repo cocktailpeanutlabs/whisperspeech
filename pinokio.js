@@ -1,6 +1,6 @@
 const path = require('path')
 module.exports = {
-  version: "1.1",
+  version: "1.2",
   title: "WhisperSpeech",
   description: "Open Source text-to-speech system built by Collabora and LAION by inverting Whisper",
   icon: "icon.webp",

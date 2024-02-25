@@ -1,20 +1,23 @@
 module.exports = {
   "cmds": {
-    "nvidia": "pip install torch torchvision torchaudio xformers --index-url https://download.pytorch.org/whl/cu118",
-    "amd": "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.6",
-    "default": "pip3 install --pre torch torchvision torchaudio"
+    "win32": {
+      "nvidia": `pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121`,
+      "amd": "pip install torch-directml",
+      "none": "pip install torch torchvision torchaudio"
+    },
+    "darwin": "pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu",
+    "linux": {
+      "nvidia": `pip install torch torchvision torchaudio`,
+      "amd": "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.7",
+      "none": "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
+    }
   },
-//  "requires": [{
-//    "type": "conda",
-//    "name": "ffmpeg",
-//    "args": "-c conda-forge"
-//  }],
   "run": [{
     "method": "shell.run",
     "params": {
       "venv": "env",
       "message": [
-        "{{(gpu === 'nvidia' ? self.cmds.nvidia : ((gpu === 'amd' && platform === 'linux') ? self.cmds.amd : self.cmds.default))}}",
+        "{{platform === 'darwin' ? self.cmds.darwin : self.cmds[platform][gpu]}}",
         "pip install -r requirements.txt",
       ]
     },
